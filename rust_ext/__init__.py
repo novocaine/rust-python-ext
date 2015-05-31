@@ -96,6 +96,10 @@ class RustBuildCommand(Command):
         build_ext = self.get_finalized_command('build_ext')
         target_fname = os.path.splitext(os.path.basename(dylib_path)[3:])[0]
         ext_path = build_ext.get_ext_fullpath(os.path.basename(target_fname))
+        try:
+            os.makedirs(os.path.dirname(ext_path))
+        except OSError:
+            pass
         shutil.copyfile(dylib_path, ext_path)
 
 
