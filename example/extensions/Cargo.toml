@@ -1,0 +1,13 @@
+[package]
+
+name = "hello-world"
+version = "0.0.1"
+authors = ["James Salter <iteration@gmail.com>"]
+
+[dependencies]
+cpython = "*"
+interpolate_idents = "0.0.3"
+
+[lib]
+name = "helloworld"
+crate-type = ["dylib"]
