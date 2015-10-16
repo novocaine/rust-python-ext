@@ -21,7 +21,7 @@ class RustBuildCommand(Command):
     user_options = []
 
     def _unpack_classargs(self):
-        for k, v in self.__class__.args.iteritems():
+        for k, v in self.__class__.args.items():
             setattr(self, k, v)
 
     def initialize_options(self):
@@ -80,12 +80,13 @@ class RustBuildCommand(Command):
             "target/", suffix)
 
         if sys.platform == "win32":
-            SO = ".dll"
+            wildcard_so = "*.dll"
+        elif sys.platform == "darwin":
+            wildcard_so = "*.dylib"
         else:
-            SO = ".so"
+            wildcard_so = "*.so"
 
         try:
-            wildcard_so = "*.dylib" if sys.platform == "darwin" else "*." + SO
             dylib_path = glob.glob(os.path.join(target_dir, wildcard_so))[0]
         except IndexError:
             raise Exception("rust build failed; unable to find any .dylib in %s" %
