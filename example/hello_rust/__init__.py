@@ -1,3 +1,3 @@
 def hello():
     import helloworld
-    helloworld.run()
+    helloworld.run(helloworld.val())

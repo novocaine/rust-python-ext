@@ -1,31 +1,30 @@
 #![crate_type = "dylib"]
-#![feature(plugin)]
-#![plugin(interpolate_idents)]
+
 #[macro_use] extern crate cpython;
 
-use cpython::{PyObject, PyResult, PyModule, Python, PyTuple};
+use cpython::{PyObject, PyResult, Python, PyTuple, PyDict};
 
-py_module_initializer!(helloworld, |py, m| {
-    try!(m.add("__doc__", "Module documentation string"));
-    try!(m.add("run", py_func!(py, run)));
-    try!(add_val(py, &m));
+py_module_initializer!(helloworld, inithelloworld, PyInit_helloworld, |py, m| {
+    try!(m.add(py, "__doc__", "Module documentation string"));
+    try!(m.add(py, "run", py_fn!(py, run(*args, **kwargs))));
+    try!(m.add(py, "val", py_fn!(py, val())));
     Ok(())
 });
 
-fn run<'p>(py: Python<'p>, args: &PyTuple<'p>) -> PyResult<'p, PyObject<'p>> {
+fn run(py: Python, args: &PyTuple, kwargs: Option<&PyDict>) -> PyResult<PyObject> {
     println!("Rust says: Hello Python!");
-    for arg in args {
+    for arg in args.iter(py) {
         println!("Rust got {}", arg);
+    }
+    if let Some(kwargs) = kwargs {
+        for (key, val) in kwargs.items(py) {
+            println!("{} = {}", key, val);
+        }
     }
     Ok(py.None())
 }
 
-fn val<'p>(_: Python<'p>, _: &PyTuple<'p>) -> PyResult<'p, i32> {
+fn val(_: Python) -> PyResult<i32> {
     Ok(42)
-}
-
-// Workaround for Rust #24561
-fn add_val<'p>(py: Python<'p>, m: &PyModule<'p>) -> PyResult<'p, ()> {
-    m.add("val", py_func!(py, val))
 }
 

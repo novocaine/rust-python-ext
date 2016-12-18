@@ -4,10 +4,11 @@ name = "hello-world"
 version = "0.0.1"
 authors = ["James Salter <iteration@gmail.com>"]
 
-[dependencies]
-cpython = "*"
-interpolate_idents = "0.0.3"
+[dependencies.cpython]
+git = "https://github.com/dgrunwald/rust-cpython.git"
+rev = "e644f24"
+default-features = false
 
 [lib]
 name = "helloworld"
-crate-type = ["dylib"]
+crate-type = ["cdylib"]
