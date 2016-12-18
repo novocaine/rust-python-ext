@@ -30,31 +30,28 @@ class RustBuildCommand(Command):
     def finalize_options(self):
         pass
 
+    def features(self):
+        version = sys.version_info
+        if (2,7) < version < (2,8):
+            return "python27-sys"
+        elif (3,3) < version:
+            return "python3-sys"
+        else:
+            raise ValueError("Unsupported python version: %s" % sys.version)
+
     def run(self):
         if self.debug:
             self.debug_or_release = "--debug"
         else:
             self.debug_or_release = "--release"
 
-        # Make sure that if pythonXX-sys is used, it builds against the current 
-        # executing python interpreter.
-        bindir = os.path.dirname(sys.executable)
-
-        env = {
-            # disables rust's pkg-config seeking for specified packages,
-            # which causes pythonXX-sys to fall back to detecting the 
-            # interpreter from the path.
-            "PYTHON_2.7_NO_PKG_CONFIG": "1",
-            "PATH":  bindir + os.pathsep + os.environ.get("PATH", "")
-        }
-
         # Execute cargo.
         try:
             args = (["cargo", "build", "--manifest-path", self.cargo_toml_path,
-                self.debug_or_release] + list(self.extra_cargo_args or []))
+                self.debug_or_release, "--features", self.features()] + list(self.extra_cargo_args or []))
             if not self.quiet:
                 print(" ".join(args), file=sys.stderr)
-            output = subprocess.check_output(args, env=env)
+            output = subprocess.check_output(args)
         except subprocess.CalledProcessError as e:
             msg = "cargo failed with code: %d\n%s" % (e.returncode, e.output)
             raise Exception(msg)
