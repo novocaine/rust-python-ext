@@ -45,13 +45,25 @@ class RustBuildCommand(Command):
         else:
             self.debug_or_release = "--release"
 
+        # Make sure that if pythonXX-sys is used, it builds against the current 
+        # executing python interpreter.
+        bindir = os.path.dirname(sys.executable)
+
+        env = {
+            # disables rust's pkg-config seeking for specified packages,
+            # which causes pythonXX-sys to fall back to detecting the 
+            # interpreter from the path.
+            "PYTHON_2.7_NO_PKG_CONFIG": "1",
+            "PATH":  bindir + os.pathsep + os.environ.get("PATH", "")
+        }
+
         # Execute cargo.
         try:
             args = (["cargo", "build", "--manifest-path", self.cargo_toml_path,
                 self.debug_or_release, "--features", self.features()] + list(self.extra_cargo_args or []))
             if not self.quiet:
                 print(" ".join(args), file=sys.stderr)
-            output = subprocess.check_output(args)
+            output = subprocess.check_output(args, env=env)
         except subprocess.CalledProcessError as e:
             msg = "cargo failed with code: %d\n%s" % (e.returncode, e.output)
             raise Exception(msg)
