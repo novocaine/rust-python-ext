@@ -49,13 +49,14 @@ class RustBuildCommand(Command):
         # executing python interpreter.
         bindir = os.path.dirname(sys.executable)
 
-        env = {
+        env = os.environ.copy()
+        env.update({
             # disables rust's pkg-config seeking for specified packages,
             # which causes pythonXX-sys to fall back to detecting the 
             # interpreter from the path.
             "PYTHON_2.7_NO_PKG_CONFIG": "1",
             "PATH":  bindir + os.pathsep + os.environ.get("PATH", "")
-        }
+        })
 
         # Execute cargo.
         try:
