@@ -1,4 +1,7 @@
 # rust-python-ext
+
+[![Build Status](https://travis-ci.org/novocaine/rust-python-ext.svg?branch=master)](https://travis-ci.org/novocaine/rust-python-ext)
+
 Setuptools helpers for rust Python extensions.
 
 Compile and distribute Python extensions written in rust as easily as if they were written in C. 

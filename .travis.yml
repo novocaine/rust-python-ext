@@ -1,0 +1,67 @@
+matrix:
+  allow_failures:
+    os: osx
+  include:
+    # Execute this code installing *cogapp* from PyPI and then:
+    # `cog.py -r .travis.yml` to update inplace.
+    # Notes:
+    #  - tox manages the python matrix
+    #  - the linux image has most python versions preinstalled
+    #  - brew installs the required versions on osx
+    #[[[cog
+    #import cog
+    #template = """\
+    #- language: generic
+    #  os: osx
+    #  python: 2.7
+    #  env:
+    #    - RUST_VERSION={rustver}
+    #- language: python
+    #  python: 2.7
+    #  env:
+    #    - RUST_VERSION={rustver}\
+    #"""
+    #for rustver in ('stable', 'beta', 'nightly'):
+    #    cog.outl(template.format(**locals()))
+    #]]]
+    - language: generic
+      os: osx
+      python: 2.7
+      env:
+        - RUST_VERSION=stable
+    - language: python
+      python: 2.7
+      env:
+        - RUST_VERSION=stable
+    - language: generic
+      os: osx
+      python: 2.7
+      env:
+        - RUST_VERSION=beta
+    - language: python
+      python: 2.7
+      env:
+        - RUST_VERSION=beta
+    - language: generic
+      os: osx
+      python: 2.7
+      env:
+        - RUST_VERSION=nightly
+    - language: python
+      python: 2.7
+      env:
+        - RUST_VERSION=nightly
+    #[[[end]]]
+
+#  Manually install python on osx
+before_install:
+  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then ci/osx-install.sh; fi
+
+install:
+  - curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUST_VERSION
+  - export PATH="$HOME/.cargo/bin:$PATH"
+  - rustc -V
+script:
+  - sudo pip install tox
+  - tox
+
