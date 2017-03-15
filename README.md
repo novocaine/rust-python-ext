@@ -91,6 +91,5 @@ The cmdclass approach is minimally invasive and is how, I believe, the setuptool
 ## TODO
 
 * Test on more platforms incl windows
-* Travis
 
 
