@@ -42,15 +42,15 @@ matrix:
       python: 2.7
       env:
         - RUST_VERSION=beta
-    - language: generic
-      os: osx
-      python: 2.7
-      env:
-        - RUST_VERSION=nightly
-    - language: python
-      python: 2.7
-      env:
-        - RUST_VERSION=nightly
+    #- language: generic
+    #  os: osx
+    #  python: 2.7
+    #  env:
+    #    - RUST_VERSION=nightly
+    #- language: python
+    #  python: 2.7
+    #  env:
+    #    - RUST_VERSION=nightly
     #[[[end]]]
 
 #  Manually install python on osx
