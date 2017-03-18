@@ -74,22 +74,54 @@ Type "help", "copyright", "credits" or "license" for more information
 Rust says: Hello Python!
 ```
 
+## Getting Started
+
+Install:
+
+```
+pip install https://github.com/novocaine/rust-python-ext/zipball/master
+```
+
+Note that I didn't ever upload this extension to pypi - the version that's
+there has been put there has been uploaded by someone else and is old.
+
+Compile the example:
+
+```
+cd example
+python setup.py install
+python -c 'import hello_rust; hello_rust.hello()'
+```
+
+If you are not pretty confident with Python C extensions already, it is recommended that you base your project off the code in the example directory. This gives you a sensible layout and something that is already compiling.
+
 ## Notes
+
+* Supports Python 2.7 and Python 3.6 on Linux and OS X (tested by travis CI)
 
 * Unlike distutils, rust-python-ext delegates all rust build decisions to cargo. 
 So you can't pass compiler args to the compiler from setup.py. This is by design. Cargo's awesome - use that. 
 You can however pass args to cargo which might then influence what it does.
 
-* If you want to access the python C API from rust, use https://github.com/dgrunwald/rust-cpython. 
-The example dir contains a project that shows how this is done.
+* If you want to access the python C API from rust, use https://github.com/dgrunwald/rust-cpython. The example dir contains a project that shows how this is done.
 
-* Tested on Homebrew python 2.7.9 on OS X - it should not be hard to get this to work on python 3, but I have not tested it yet.
+* If you don't explicitly pass `ext_name` to `build_rust_cmdclass`, your
+  extensions will be be named according to your lib's name in `cargo.toml`,
+with the `lib` prefix stripped out so that it looks like a regular Python
+module as per the c-ext convention. If you want it to start with `lib` or be
+named something else, pass a value to `ext_name`.
 
-* This should interop just fine with other C-exts or cython being in the package, although I haven't tested it. 
-The cmdclass approach is minimally invasive and is how, I believe, the setuptools god intends things to be.
+* This should interop just fine with other C-exts or cython being in the package, although I haven't tested it.
+The cmdclass approach is minimally invasive and is how, I believe, the setuptools god intends things to be. There is no monkey-patching or hacking of distutils internals.
+
+* As per the above, you don't *have* to use the supplied cmdclass helper for `install_lib` if you don't want to, it just means that `install` will automatically trigger `build_rust`.
+
+* You can use `setup.py develop` to put your module's code on PYTHONPATH
+  without installing it, as you can with other extensions. This automatically
+enables --inplace.
 
 ## TODO
 
-* Test on more platforms incl windows
-
-
+* Windows
+* An example using CFFI and/or ctypes
+* `clean` command
