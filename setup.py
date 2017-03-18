@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = "rust-ext",
-    version = "0.1",
+    version = "0.1.1",
     packages = ["rust_ext"],
 
     # metadata for upload to PyPI
